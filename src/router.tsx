@@ -1,10 +1,11 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import Home from './page/Home';
 
 const route = [
   {
     path: '',
-    element: <div>Main</div>,
+    element: <Home />,
     errorElement: <div>Error</div>,
   },
 ];
