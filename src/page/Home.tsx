@@ -26,6 +26,7 @@ export default function Home() {
 
   const handleSearchValue = (value: string) => {
     setSearch(value);
+    addRecentSearch(undefined, value);
   };
 
   //ref
@@ -71,19 +72,21 @@ export default function Home() {
 
   //sessionStorage
   const addRecentSearch = (
-    event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>,
+    event?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>,
+    value?: string,
   ) => {
-    event.preventDefault();
+    event?.preventDefault();
     const arr = sessionStorage.getItem('recentSearch');
+    const tmpSearch = value || search;
     if (arr) {
       const recentArr = JSON.parse(arr);
-      const index = recentArr.indexOf(search);
+      const index = recentArr.indexOf(tmpSearch);
       if (index > -1) {
         recentArr.splice(index, 1);
       }
       if (recentArr.length === maxShowNum) recentArr.splice(-1, 1);
-      sessionStorage.setItem('recentSearch', JSON.stringify([search, ...recentArr]));
-    } else sessionStorage.setItem('recentSearch', JSON.stringify([search]));
+      sessionStorage.setItem('recentSearch', JSON.stringify([tmpSearch, ...recentArr]));
+    } else sessionStorage.setItem('recentSearch', JSON.stringify([tmpSearch]));
   };
 
   useEffect(() => {
@@ -234,8 +237,9 @@ const ResultSectionTitle = styled.span`
 `;
 
 const NoResultText = styled.span`
-  margin-top: 10px;
+  margin: 10px 0;
   color: #a7afb7;
+  margin-left: 25px;
 `;
 
 const ResultRecommendArea = styled.div`
