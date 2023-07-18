@@ -68,7 +68,7 @@ export default function Home() {
       }
     };
     getSick();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, onFocus]);
 
   //sessionStorage
   const addRecentSearch = (
@@ -118,15 +118,19 @@ export default function Home() {
         {onFocus && (
           <ResultAreaContainer>
             {search ? (
-              searchRes.map((search) => {
-                return (
-                  <ResultSpan
-                    key={search.sickCd}
-                    title={search.sickNm}
-                    handleSearchValue={handleSearchValue}
-                  />
-                );
-              })
+              <>
+                <ResultSpan key={search} title={search} handleSearchValue={handleSearchValue} />
+                <ResultSectionTitle>추천 검색어</ResultSectionTitle>
+                {searchRes.map((search) => {
+                  return (
+                    <ResultSpan
+                      key={search.sickCd}
+                      title={search.sickNm}
+                      handleSearchValue={handleSearchValue}
+                    />
+                  );
+                })}
+              </>
             ) : (
               <>
                 <ResultRecentArea>
@@ -229,11 +233,12 @@ const ResultRecentArea = styled.div`
   border-bottom: 0.5px solid rgba(128, 128, 128, 0.2);
 `;
 
-const ResultSectionTitle = styled.span`
+const ResultSectionTitle = styled.p`
   padding: 0 25px;
-  margin-bottom: 8px;
+  margin: 5px 0 10px 0;
   font-size: 14px;
-  color: #6a737b;
+  font-weight: 700;
+  color: #53585d;
 `;
 
 const NoResultText = styled.span`
