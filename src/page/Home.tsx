@@ -4,6 +4,9 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import useDebounce from '../hooks/useDebounce';
 import { getSickList } from '../api/search';
 import { Sick } from '../types/SickType';
+import ResultSpan from '../components/ResultSpan';
+import RecommendBlock from '../components/RecommendBlock';
+import { maxShowNum, recommendArray } from '../constants/constant';
 
 export default function Home() {
   const [search, setSearch] = useState('');
@@ -13,19 +16,28 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  let arr = sessionStorage.getItem('recentSearch');
+  let recentSearchArr = arr ? JSON.parse(arr) : [];
+
   const changeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (search.length === 0) setSearchRes([]);
     setSearch(e.target.value);
   };
 
+  const handleSearchValue = (value: string) => {
+    setSearch(value);
+  };
+
+  //ref
   const clickInputFocus = () => {
     setOnFocus(true);
   };
 
   const clickSection = <T extends Event>(event: T) => {
     const targetNode = event.target as Node;
-
     if (document.activeElement !== inputRef.current && !sectionRef.current?.contains(targetNode)) {
       setOnFocus(false);
+      setSearchRes([]);
     }
   };
 
@@ -40,16 +52,44 @@ export default function Home() {
     };
   }, []);
 
+  //debounce
   const debouncedSearch = useDebounce(search);
 
   useEffect(() => {
     if (search === '') return;
     const getSick = async () => {
       const res = await getSickList(debouncedSearch);
-      setSearchRes(res);
+      if (res.length > maxShowNum) {
+        const tmpArr = res.slice(0, maxShowNum);
+        setSearchRes(tmpArr);
+      } else {
+        setSearchRes(res);
+      }
     };
     getSick();
   }, [debouncedSearch]);
+
+  //sessionStorage
+  const addRecentSearch = (
+    event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>,
+  ) => {
+    event.preventDefault();
+    const arr = sessionStorage.getItem('recentSearch');
+    if (arr) {
+      const recentArr = JSON.parse(arr);
+      const index = recentArr.indexOf(search);
+      if (index > -1) {
+        recentArr.splice(index, 1);
+      }
+      if (recentArr.length === maxShowNum) recentArr.splice(-1, 1);
+      sessionStorage.setItem('recentSearch', JSON.stringify([search, ...recentArr]));
+    } else sessionStorage.setItem('recentSearch', JSON.stringify([search]));
+  };
+
+  useEffect(() => {
+    arr = sessionStorage.getItem('recentSearch');
+    recentSearchArr = arr ? JSON.parse(arr) : [];
+  }, []);
 
   return (
     <HomeContainer>
@@ -59,7 +99,7 @@ export default function Home() {
         온라인으로 참여하기
       </HomeHeader>
       <div ref={sectionRef}>
-        <SearchAreaContainer>
+        <SearchAreaContainer onSubmit={addRecentSearch}>
           <AiOutlineSearch size="24" color="#A7AFB7" />
           <SearchAreaInput
             ref={inputRef}
@@ -68,15 +108,58 @@ export default function Home() {
             placeholder="질환명을 입력해 주세요."
             onFocus={clickInputFocus}
           />
-          <SearchButton>
+          <SearchButton onClick={addRecentSearch}>
             <AiOutlineSearch size="30" color="#ffffff" />
           </SearchButton>
         </SearchAreaContainer>
         {onFocus && (
           <ResultAreaContainer>
-            {searchRes.map((search) => {
-              return <p key={search.sickCd}>{search.sickNm}</p>;
-            })}
+            {search ? (
+              searchRes.map((search) => {
+                return (
+                  <ResultSpan
+                    key={search.sickCd}
+                    title={search.sickNm}
+                    handleSearchValue={handleSearchValue}
+                  />
+                );
+              })
+            ) : (
+              <>
+                <ResultRecentArea>
+                  <ResultSectionTitle>최근검색어</ResultSectionTitle>
+                  {recentSearchArr.length === 0 ? (
+                    <NoResultText>최근검색어가 없습니다</NoResultText>
+                  ) : (
+                    recentSearchArr.map((result: string) => {
+                      return (
+                        <ResultSpan
+                          title={result}
+                          handleSearchValue={handleSearchValue}
+                          key={result}
+                        />
+                      );
+                    })
+                  )}
+                </ResultRecentArea>
+                <ResultRecommendArea>
+                  <>
+                    <ResultSectionTitle>추천 검색어로 검색해보세요</ResultSectionTitle>
+                    <BlockContainer>
+                      {recommendArray.map((result: string) => {
+                        return (
+                          <RecommendBlock
+                            title={result}
+                            handleSearchValue={handleSearchValue}
+                            key={result}
+                          />
+                        );
+                      })}
+                    </BlockContainer>
+                  </>
+                </ResultRecommendArea>
+              </>
+            )}
           </ResultAreaContainer>
         )}
       </div>
@@ -89,7 +172,7 @@ const HomeContainer = styled.main`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 30vh;
+  margin-top: 200px;
 `;
 
 const HomeHeader = styled.h1`
@@ -100,7 +183,7 @@ const HomeHeader = styled.h1`
   margin-bottom: 20px;
 `;
 
-const SearchAreaContainer = styled.div`
+const SearchAreaContainer = styled.form`
   width: 490px;
   height: 73px;
   background-color: #ffffff;
@@ -129,9 +212,40 @@ const SearchButton = styled.div`
 `;
 
 const ResultAreaContainer = styled.div`
-  padding: 20px 25px;
+  padding: 20px 0;
   margin-top: 5px;
   width: 490px;
   border-radius: 15px;
   background-color: #ffffff;
+`;
+
+const ResultRecentArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid rgba(128, 128, 128, 0.2);
+`;
+
+const ResultSectionTitle = styled.span`
+  padding: 0 25px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6a737b;
+`;
+
+const NoResultText = styled.span`
+  margin-top: 10px;
+  color: #a7afb7;
+`;
+
+const ResultRecommendArea = styled.div`
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const BlockContainer = styled.div`
+  padding: 0 25px;
+  display: flex;
+  gap: 10px;
 `;
