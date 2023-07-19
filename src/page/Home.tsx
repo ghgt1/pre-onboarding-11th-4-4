@@ -6,7 +6,7 @@ import { getSickList } from '../api/search';
 import { Sick } from '../types/SickType';
 import ResultSpan from '../components/ResultSpan';
 import RecommendBlock from '../components/RecommendBlock';
-import { maxShowNum, recommendArray } from '../constants/constant';
+import { MAX_SHOW_NUM, RECOMMEND_ARRAY } from '../constants/constant';
 
 export default function Home() {
   const [search, setSearch] = useState('');
@@ -19,8 +19,28 @@ export default function Home() {
   let arr = sessionStorage.getItem('recentSearch');
   let recentSearchArr = arr ? JSON.parse(arr) : [];
 
+  //debounce
+  const { debouncedValue, setDebouncedValue } = useDebounce(search);
+
+  useEffect(() => {
+    if (search === '' || debouncedValue === '') return;
+    const getSick = async () => {
+      const res = await getSickList(debouncedValue);
+      if (res.length > MAX_SHOW_NUM) {
+        const tmpArr = res.slice(0, MAX_SHOW_NUM);
+        setSearchRes(tmpArr);
+      } else {
+        setSearchRes(res);
+      }
+    };
+    getSick();
+  }, [debouncedValue, onFocus]);
+
   const changeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (search.length === 0) setSearchRes([]);
+    if (search.length === 0) {
+      setSearchRes([]);
+      setDebouncedValue('');
+    }
     setSearch(e.target.value);
   };
 
@@ -53,23 +73,6 @@ export default function Home() {
     };
   }, []);
 
-  //debounce
-  const debouncedSearch = useDebounce(search);
-
-  useEffect(() => {
-    if (search === '') return;
-    const getSick = async () => {
-      const res = await getSickList(debouncedSearch);
-      if (res.length > maxShowNum) {
-        const tmpArr = res.slice(0, maxShowNum);
-        setSearchRes(tmpArr);
-      } else {
-        setSearchRes(res);
-      }
-    };
-    getSick();
-  }, [debouncedSearch, onFocus]);
-
   //sessionStorage
   const addRecentSearch = (
     event?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>,
@@ -84,7 +87,7 @@ export default function Home() {
       if (index > -1) {
         recentArr.splice(index, 1);
       }
-      if (recentArr.length === maxShowNum) recentArr.splice(-1, 1);
+      if (recentArr.length === MAX_SHOW_NUM) recentArr.splice(-1, 1);
       sessionStorage.setItem('recentSearch', JSON.stringify([tmpSearch, ...recentArr]));
     } else sessionStorage.setItem('recentSearch', JSON.stringify([tmpSearch]));
   };
@@ -153,7 +156,7 @@ export default function Home() {
                   <>
                     <ResultSectionTitle>추천 검색어로 검색해보세요</ResultSectionTitle>
                     <BlockContainer>
-                      {recommendArray.map((result: string) => {
+                      {RECOMMEND_ARRAY.map((result: string) => {
                         return (
                           <RecommendBlock
                             title={result}
@@ -235,7 +238,7 @@ const ResultRecentArea = styled.div`
 
 const ResultSectionTitle = styled.p`
   padding: 0 25px;
-  margin: 5px 0 10px 0;
+  margin: 8px 0 8px 0;
   font-size: 14px;
   font-weight: 700;
   color: #53585d;
@@ -248,7 +251,7 @@ const NoResultText = styled.span`
 `;
 
 const ResultRecommendArea = styled.div`
-  padding-top: 20px;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
 `;
