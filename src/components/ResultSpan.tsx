@@ -5,22 +5,31 @@ import { AiOutlineSearch } from 'react-icons/ai';
 type ResultSpanProps = {
   title: string;
   handleSearchValue: (value: string) => void;
+  highlight?: boolean;
 };
 
-export default function ResultSpan({ title, handleSearchValue }: ResultSpanProps) {
+interface ResultSpanContainerProps {
+  $highlight?: boolean;
+}
+
+export default function ResultSpan({
+  title,
+  handleSearchValue,
+  highlight = false,
+}: ResultSpanProps) {
   const clickSearchValue = () => {
     handleSearchValue(title);
   };
 
   return (
-    <ResultSpanContainer onClick={clickSearchValue}>
+    <ResultSpanContainer onClick={clickSearchValue} $highlight={highlight}>
       <AiOutlineSearch size="24" color="#A7AFB7" />
       <StyledSpan>{title}</StyledSpan>
     </ResultSpanContainer>
   );
 }
 
-const ResultSpanContainer = styled.div`
+const ResultSpanContainer = styled.div<ResultSpanContainerProps>`
   padding: 0 25px;
   cursor: pointer;
   display: flex;
@@ -29,6 +38,7 @@ const ResultSpanContainer = styled.div`
   &:hover {
     background-color: rgba(128, 128, 128, 0.1);
   }
+  ${(props) => (props.$highlight ? 'background-color: rgba(128, 128, 128, 0.1);' : '')}
 `;
 
 const StyledSpan = styled.span`
