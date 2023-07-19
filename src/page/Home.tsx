@@ -12,6 +12,7 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [searchRes, setSearchRes] = useState<Sick[]>([]);
   const [onFocus, setOnFocus] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function Home() {
 
   useEffect(() => {
     if (search === '' || debouncedValue === '') return;
+
     const getSick = async () => {
       const res = await getSickList(debouncedValue);
       if (res.length > MAX_SHOW_NUM) {
@@ -32,15 +34,21 @@ export default function Home() {
       } else {
         setSearchRes(res);
       }
+      setLoading(false);
     };
     getSick();
   }, [debouncedValue, onFocus]);
 
-  const changeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
     if (search.length === 0) {
       setSearchRes([]);
       setDebouncedValue('');
+      setLoading(false);
     }
+  }, [search]);
+
+  const changeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
     setSearch(e.target.value);
   };
 
@@ -120,19 +128,25 @@ export default function Home() {
         </SearchAreaContainer>
         {onFocus && (
           <ResultAreaContainer>
-            {search ? (
+            {loading ? (
+              <ResultSectionTitle>검색 중...</ResultSectionTitle>
+            ) : search ? (
               <>
                 <ResultSpan key={search} title={search} handleSearchValue={handleSearchValue} />
                 <ResultSectionTitle>추천 검색어</ResultSectionTitle>
-                {searchRes.map((search) => {
-                  return (
-                    <ResultSpan
-                      key={search.sickCd}
-                      title={search.sickNm}
-                      handleSearchValue={handleSearchValue}
-                    />
-                  );
-                })}
+                {searchRes.length === 0 ? (
+                  <NoResultText>검색 결과가 없습니다</NoResultText>
+                ) : (
+                  searchRes.map((search) => {
+                    return (
+                      <ResultSpan
+                        key={search.sickCd}
+                        title={search.sickNm}
+                        handleSearchValue={handleSearchValue}
+                      />
+                    );
+                  })
+                )}
               </>
             ) : (
               <>

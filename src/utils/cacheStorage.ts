@@ -1,7 +1,7 @@
 import { Sick } from '../types/SickType';
 import { EXPIRE_TIME } from '../constants/constant';
 
-export const isExpired = (cacheResponse?: Response) => {
+const isExpired = (cacheResponse?: Response) => {
   const cachedDate = cacheResponse?.headers.get('SET_DATE');
 
   if (!cachedDate) return;
