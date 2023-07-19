@@ -23,6 +23,7 @@ function useKeyboard(
         if (index === 0) return;
         setIndex((prevIndex) => prevIndex - 1);
       } else if (event.key === 'Enter') {
+        if (index === -1) return;
         if (value.length === 0) setSearch(recentSearchArr[index]);
         else setSearch(searchRes[index].sickNm);
       }
