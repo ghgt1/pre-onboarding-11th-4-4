@@ -25,6 +25,7 @@ const ResultSpanContainer = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
+  font-weight: 700;
   &:hover {
     background-color: rgba(128, 128, 128, 0.1);
   }
