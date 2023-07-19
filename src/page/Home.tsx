@@ -7,6 +7,7 @@ import { Sick } from '../types/SickType';
 import ResultSpan from '../components/ResultSpan';
 import RecommendBlock from '../components/RecommendBlock';
 import { MAX_SHOW_NUM, RECOMMEND_ARRAY } from '../constants/constant';
+import useKeyboard from '../hooks/useKeyboard';
 
 export default function Home() {
   const [search, setSearch] = useState('');
@@ -44,7 +45,7 @@ export default function Home() {
       setSearchRes([]);
       setDebouncedValue('');
       setLoading(false);
-    }
+    } else setLoading(true);
   }, [search]);
 
   const changeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +106,9 @@ export default function Home() {
     recentSearchArr = arr ? JSON.parse(arr) : [];
   }, []);
 
+  //keyboard
+  const index = useKeyboard(search, setSearch, searchRes, recentSearchArr);
+
   return (
     <HomeContainer>
       <HomeHeader>
@@ -137,12 +141,13 @@ export default function Home() {
                 {searchRes.length === 0 ? (
                   <NoResultText>검색 결과가 없습니다</NoResultText>
                 ) : (
-                  searchRes.map((search) => {
+                  searchRes.map((search, i: number) => {
                     return (
                       <ResultSpan
                         key={search.sickCd}
                         title={search.sickNm}
                         handleSearchValue={handleSearchValue}
+                        highlight={i === index}
                       />
                     );
                   })
@@ -155,12 +160,13 @@ export default function Home() {
                   {recentSearchArr.length === 0 ? (
                     <NoResultText>최근검색어가 없습니다</NoResultText>
                   ) : (
-                    recentSearchArr.map((result: string) => {
+                    recentSearchArr.map((result: string, i: number) => {
                       return (
                         <ResultSpan
                           title={result}
                           handleSearchValue={handleSearchValue}
                           key={result}
+                          highlight={i === index}
                         />
                       );
                     })
