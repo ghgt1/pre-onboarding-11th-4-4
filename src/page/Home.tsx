@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
 import useDebounce from '../hooks/useDebounce';
 import { getSickList } from '../api/search';
@@ -8,6 +7,19 @@ import ResultSpan from '../components/ResultSpan';
 import RecommendBlock from '../components/RecommendBlock';
 import { MAX_SHOW_NUM, RECOMMEND_ARRAY } from '../constants/constant';
 import useKeyboard from '../hooks/useKeyboard';
+import {
+  HomeContainer,
+  HomeHeader,
+  SearchAreaContainer,
+  SearchAreaInput,
+  SearchButton,
+  ResultAreaContainer,
+  ResultSectionTitle,
+  NoResultText,
+  ResultRecentArea,
+  ResultRecommendArea,
+  BlockContainer,
+} from './styles';
 
 export default function Home() {
   const [search, setSearch] = useState('');
@@ -196,88 +208,3 @@ export default function Home() {
     </HomeContainer>
   );
 }
-
-const HomeContainer = styled.main`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 200px;
-`;
-
-const HomeHeader = styled.h1`
-  text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.6;
-  margin-bottom: 20px;
-`;
-
-const SearchAreaContainer = styled.form`
-  width: 490px;
-  height: 73px;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  padding: 20px 10px 20px 24px;
-  border-radius: 42px;
-  border: 2px solid;
-  border-color: #ffffff;
-`;
-
-const SearchAreaInput = styled.input`
-  margin-left: 16px;
-  width: 100%;
-`;
-
-const SearchButton = styled.div`
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  padding: 1px 10px;
-  display: flex;
-  align-items: center;
-  background-color: #007be9;
-  cursor: pointer;
-`;
-
-const ResultAreaContainer = styled.div`
-  padding: 20px 0;
-  margin-top: 5px;
-  width: 490px;
-  border-radius: 15px;
-  background-color: #ffffff;
-`;
-
-const ResultRecentArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 10px;
-  border-bottom: 0.5px solid rgba(128, 128, 128, 0.2);
-`;
-
-const ResultSectionTitle = styled.p`
-  padding: 0 25px;
-  margin: 8px 0 8px 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: #53585d;
-`;
-
-const NoResultText = styled.span`
-  margin: 10px 0;
-  color: #a7afb7;
-  margin-left: 25px;
-`;
-
-const ResultRecommendArea = styled.div`
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const BlockContainer = styled.div`
-  padding: 0 25px;
-  display: flex;
-  gap: 10px;
-`;
