@@ -13,7 +13,7 @@ function useDebounce(value: string) {
     };
   }, [value]);
 
-  return debouncedValue;
+  return { debouncedValue, setDebouncedValue };
 }
 
 export default useDebounce;
