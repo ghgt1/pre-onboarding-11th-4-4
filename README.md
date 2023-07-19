@@ -127,7 +127,7 @@ npm start
             <th>설명</th>
         </tr>
         <tr>
-            <td><img src="https://github.com/pre-onboarding-Team-4/pre-onboarding-11th-3-4/assets/108166730/da71482f-a84d-41b2-a926-54ff3c155386"
+            <td><img src="https://github.com/ghgt1/pre-onboarding-11th-4-4/assets/35508595/fb732b2e-affe-4276-8023-6497ea1011fb"
                     alt="" /></td>
             <td>최근 검색어 확인<ul>
                     <li>최근 검색했던 검색어를 최대 7개 확인 가능합니다.</li>
@@ -136,7 +136,7 @@ npm start
         </tr>
         <tr></tr>
         <tr>
-            <td><img src="https://github.com/pre-onboarding-Team-4/pre-onboarding-11th-3-4/assets/108166730/9cb33f00-7f38-4387-821c-98f40f592aee"
+            <td><img src="https://github.com/ghgt1/pre-onboarding-11th-4-4/assets/35508595/4622206f-0c2d-481d-8c94-d8f9e105029a"
                     alt="" /></td>
             <td>검색을 통한 검색어 추천<ul>
                     <li>현재 검색창에 입력한 내용을 통해 검색어 추천을 최대 7개 제공합니다.</li>
@@ -145,7 +145,7 @@ npm start
         </tr>
         <tr></tr>
         <tr>
-            <td><img src="https://github.com/pre-onboarding-Team-4/pre-onboarding-11th-3-4/assets/108166730/25b3cd8d-3238-4097-918f-8676dbb720fc"
+            <td><img src="https://github.com/ghgt1/pre-onboarding-11th-4-4/assets/35508595/629892a5-8f0b-4e13-a6dd-59ff0cad8036"
                     alt="" /></td>
             <td>키보드를 활용한 추천 검색어 서칭<ul>
                     <li>키보드만을 이용하여 검색창에서 추천 검색어로 이동 가능하고, 엔터키를 통해 검색도 가능합니다. </li>
